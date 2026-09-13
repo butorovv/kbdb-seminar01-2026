@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: student
       POSTGRES_DB: plant
     ports:
-      - "5432:5432"          # если порт занят — поменяйте на "5433:5432"
+      - "5433:5432"          # если порт занят — поменяйте на "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./sql/init:/docker-entrypoint-initdb.d   # схема и датасет загрузятся при ПЕРВОМ старте
