@@ -80,7 +80,15 @@ order by s.id;
 -- Ожидается: 25 строк; 11:00 → 73.4, 13:00 → 83.8, 14:00 → 85.5
 -- ---------------------------------------------------------------------
 -- Задача 5
-
+select
+    date_trunc('hour', t.ts) as hour,
+    round(avg(t.value), 1) as avg_temp
+from telemetry t
+join sensor s on s.id = t.sensor_id
+where s.unit_id = 'GPA-2'
+  and s.kind = 'temp'
+group by date_trunc('hour', t.ts)
+order by hour;
 
 
 -- ---------------------------------------------------------------------
@@ -88,7 +96,15 @@ order by s.id;
 -- Ожидается: 10 строк «как есть». Почему не 9? Посмотрите на severity внимательно.
 -- ---------------------------------------------------------------------
 -- Задача 6
-
+select
+    s.name as station_name,
+    e.severity,
+    count(*) as cnt
+from event e
+join unit u on u.id = e.unit_id
+join station s on s.id = u.station_id
+group by s.name, e.severity
+order by s.name, e.severity;
 
 
 -- ---------------------------------------------------------------------
@@ -96,7 +112,15 @@ order by s.id;
 -- Ожидается: 5 агрегатов. Если у вас 6 — вы не учли регистр в severity.
 -- ---------------------------------------------------------------------
 -- Задача 7
-
+select u.id, u.model
+from unit u
+where not exists (
+    select 1
+    from event e
+    where e.unit_id = u.id
+      and lower(trim(e.severity)) in ('alarm', 'unplanned_stop')
+)
+order by u.id;
 
 
 -- =====================================================================
